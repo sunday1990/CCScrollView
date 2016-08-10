@@ -22,21 +22,22 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     SHDataBaseModel *dataBase  = [[SHDataBaseModel alloc]init];
-    dataBase.unitSpace = 150;
+     ;
+    dataBase.unitSpace = ([UIScreen mainScreen].bounds.size.width-20)/3;
     dataBase.normalRadius = 30;
-    dataBase.currentRadius = 60;
+    dataBase.currentRadius = 45;
     for (int i = 0; i<10;i++) {
         SHUnitModel *model = [[SHUnitModel alloc]init];
         model.level = i;
         model.scroes = i;
-//        if (i == 5) {
-//            model.isCurrentLevel = YES;
-//            model.currentRadius = 60;
-//            model.currentLevel = i;
-//            dataBase.currentLevel = i;
-//        }else{
+        if (i == 5) {
+            model.isCurrentLevel = YES;
+            model.currentRadius = 45;
+            model.currentLevel = i;
+            dataBase.currentLevel = i;
+        }else{
             model.normalRadius = 30;
-//        }
+        }
         [dataBase.unitsArray addObject:model];
     }    
     manager = [SHScrollManager managerWithDataBase:dataBase];

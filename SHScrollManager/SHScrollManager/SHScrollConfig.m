@@ -9,6 +9,7 @@
 #import "SHScrollConfig.h"
 
 #define WIDTH 500;
+#define pad 10
 
 @implementation SHScrollConfig
 
@@ -17,20 +18,30 @@
 - (void)sharedObservation{
     static  dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
+    NSInteger centerIndex ;
+    for (int i = 0; i<self.baseModel.centerXArray.count; i++) {
+        if ([self.baseModel.centerXArray[i] floatValue]-[UIScreen mainScreen].bounds.size.width/2>0) {
+            centerIndex = i-1;
+            break;
+        }
+    }
+    newCenterX = [self.baseModel.centerXArray[0] floatValue]+centerIndex*self.baseModel.unitSpace+self.baseModel.unitSpace/2.0;
     [self addObserver:self forKeyPath:@"offsetX" options:NSKeyValueObservingOptionNew|NSKeyValueObservingOptionOld context:nil];
     });
 }
 
+#pragma mark暂时只使其中一个有变化，如果需要联动的话需要调reducecallback
 - (void)configWithOffset:(CGFloat)offset andBaseModel:(SHDataBaseModel *)baseModel enlargeCallBack:(void (^)(NSInteger, CGSize))largeCallBack reduceCallBack:(void (^)(NSInteger, CGSize))reduceCallBack{
     self.offsetX = offset;
+    self.baseModel = baseModel;
     [self sharedObservation];
     [self configTheNearestViewWithOffset:offset BaseModel:baseModel andCallBack:^(NSInteger index, BOOL isEnlarge,CGSize newSize) {
         if (isEnlarge) {
             largeCallBack(index,newSize);
-            reduceCallBack(index-1,CGSizeMake(2*(baseModel.currentRadius+baseModel.normalRadius-newSize.height/2),2*(baseModel.currentRadius+baseModel.normalRadius-newSize.height/2)));
+//            reduceCallBack(index-1,CGSizeMake(2*(baseModel.currentRadius+baseModel.normalRadius-newSize.height/2),2*(baseModel.currentRadius+baseModel.normalRadius-newSize.height/2)));
         }else{
             largeCallBack(index,newSize);
-            reduceCallBack(index+1,CGSizeMake(2*(baseModel.currentRadius+baseModel.normalRadius-newSize.height/2),2*(baseModel.currentRadius+baseModel.normalRadius-newSize.height/2)));
+//            reduceCallBack(index+1,CGSizeMake(2*(baseModel.currentRadius+baseModel.normalRadius-newSize.height/2),2*(baseModel.currentRadius+baseModel.normalRadius-newSize.height/2)));
         }
     }];
 
@@ -40,9 +51,9 @@
 /**
  *
  *
- *  @param offset 偏移量
+ *  @param offset       偏移量
  *  @param centerXArray 中心点数组
- *  @param block  参数回调
+ *  @param block        参数回调
  */
 - (void)configTheNearestViewWithOffset:(CGFloat)offset BaseModel:(SHDataBaseModel *)baseModel andCallBack:(void(^)(NSInteger index,BOOL isEnlarge,CGSize newSize))block{
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
@@ -52,7 +63,7 @@
             for (int i = 0 ; i<baseModel.centerXArray.count; i++) {
                 float a;
                 a = [baseModel.centerXArray[i]floatValue]-offset;
-                temp = fabs(a-[UIScreen mainScreen].bounds.size.width/2);
+                temp = fabs(a-(newCenterX));//[UIScreen mainScreen].bounds.size.width/2+pad+space
                 if (temp<min) {
                     min = temp;
                     minIndex = i;
@@ -65,10 +76,8 @@
     });
 }
 
-#warning 高度有问题
 - (CGSize)getSizeOfNearstWithModel:(SHDataBaseModel *)dataBase andMinSpace:(CGFloat)min{
-    
-    CGFloat H =(dataBase.unitSpace-min)*(dataBase.currentRadius-dataBase.normalRadius)/dataBase.unitSpace+dataBase.normalRadius;
+    CGFloat H =(dataBase.unitSpace/2-min)*(dataBase.currentRadius-dataBase.normalRadius)/(dataBase.unitSpace/2)+dataBase.normalRadius;
     return CGSizeMake(2*H, 2*H);
     
 }

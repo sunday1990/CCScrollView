@@ -28,16 +28,17 @@
 }
 
 - (void)config{
+       CGFloat space;
+       SHUnitModel *unitModel0 = self.dataBase.unitsArray[0];
+        if (self.dataBase.currentLevel == 0) {
+            space = unitModel0.currentRadius;
+        }else{
+            space = unitModel0.normalRadius;
+        }
        for (int i = 0; i<self.dataBase.unitsArray.count; i++) {
         SHUnitModel *unitModel = self.dataBase.unitsArray[i];
-       CGFloat space;
-       if (self.dataBase.currentLevel == 0) {
-           space = unitModel.currentRadius;
-       }else{
-           space = unitModel.normalRadius;
-       }
         SHUnitView *unit = [SHUnitView viewWithUnitModel:unitModel];
-        unit.center = CGPointMake(padding+space+self.dataBase.unitSpace*i,0);
+        unit.centerX = padding+space+self.dataBase.unitSpace*i;
         unit.centerY = self.scrollView.centerY;
         [self.scrollView addSubview:unit];
         [self.dataBase.viewsArray addObject:unit];
@@ -62,6 +63,7 @@
     }
     UIView *view = self.dataBase.viewsArray[index];
     view.size = newSize;
+    view.centerX = [self.dataBase.centerXArray[index]floatValue];
     view.layer.cornerRadius = view.height/2;
     view.centerY = self.scrollView.height/2;
 }

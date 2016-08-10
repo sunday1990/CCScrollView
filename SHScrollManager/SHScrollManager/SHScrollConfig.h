@@ -14,10 +14,11 @@
 @interface SHScrollConfig : NSObject
 {
     BOOL rightDir;//向右
+    CGFloat newCenterX;//新的坐标轴X
 }
 
 @property (nonatomic, assign)CGFloat offsetX;
-
+@property (nonatomic, strong)SHDataBaseModel *baseModel;
 - (void)configWithOffset:(CGFloat)offset andBaseModel:(SHDataBaseModel *)baseModel enlargeCallBack:(void (^)(NSInteger index, CGSize largeSize))largeCallBack reduceCallBack:(void (^)(NSInteger index, CGSize reduceSize))reduceCallBack;
 
 @end
