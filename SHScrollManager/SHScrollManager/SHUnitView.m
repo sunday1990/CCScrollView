@@ -45,7 +45,6 @@
         }
         
     }
-//    [self addObserver:self forKeyPath:@"frame" options:NSKeyValueObservingOptionNew context:nil];
     self.layer.cornerRadius = self.height/2;
     self.scoreLabel.frame = CGRectMake(0, 0, self.width, 10);
 //    self.scoreLabel.text = [NSString stringWithFormat:@"%ld",(long)model.level];
@@ -68,7 +67,4 @@
     return _scoreLabel;
 }
 
-//- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context{
-//
-//}
 @end
