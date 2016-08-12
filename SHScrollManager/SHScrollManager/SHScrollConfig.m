@@ -8,7 +8,6 @@
 
 #import "SHScrollConfig.h"
 
-#define WIDTH 500;
 #define pad 10
 
 @implementation SHScrollConfig
